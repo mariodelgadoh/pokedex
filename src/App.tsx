@@ -11,17 +11,16 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      {/* Botón Jugar fijo en la esquina inferior derecha - siempre visible */}
+      {/* Botón Jugar con z-index más bajo que el modal */}
       {!showGames && (
         <button
           onClick={handlePlayClick}
-          className="fixed bottom-6 right-6 z-50
+          className="fixed bottom-6 right-6 z-40
             bg-gradient-to-r from-yellow-400 to-yellow-500
             text-gray-900 font-bold py-3 pl-4 pr-8 rounded-full
             shadow-2xl hover:shadow-3xl
             transform hover:scale-110 transition-all
             border-4 border-red-500
-            animate-bounce
             text-lg sm:text-xl
             touch-manipulation
             flex items-center gap-2"
