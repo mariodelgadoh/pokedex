@@ -4,7 +4,6 @@ import { pokemonApi } from '../services/pokemonApi';
 import { PokemonCard } from './PokemonCard';
 import { PokemonDetail } from './PokemonDetail';
 import { SearchBar } from './SearchBar';
-import './PokemonList.css';
 
 export const PokemonList: React.FC = () => {
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
@@ -80,43 +79,70 @@ export const PokemonList: React.FC = () => {
   };
 
   return (
-    <div className="pokemon-list-container">
-      <h1 className="title">Pokédex</h1>
-      
-      <SearchBar onSearch={handleSearch} />
-      
-      {error && <div className="error">{error}</div>}
-      
-      <div className="pokemon-grid">
-        {filteredPokemons.map((pokemon) => (
-          <PokemonCard
-            key={pokemon.id}
-            pokemon={pokemon}
-            onClick={() => handlePokemonClick(pokemon)}
-          />
-        ))}
-      </div>
-      
-      {loading && <div className="loading">Cargando Pokémon...</div>}
-      
-      {hasMore && !loading && filteredPokemons.length === pokemons.length && (
-        <button onClick={loadMore} className="load-more-button">
-          Cargar más Pokémon
-        </button>
-      )}
-      
-      {filteredPokemons.length === 0 && !loading && (
-        <div className="no-results">
-          No se encontraron Pokémon con "{searchTerm}"
+    <div className="min-h-screen bg-gradient-to-br from-red-500 via-red-600 to-blue-600 p-8">
+      {/* Header estilo Pokédex */}
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-8 relative">
+          <h1 className="text-6xl font-bold text-white mb-2 drop-shadow-lg 
+            [text-shadow:_0_4px_0_#3B4CCA,_0_8px_8px_rgba(0,0,0,0.3)]">
+            POKÉDEX
+          </h1>
+          <div className="w-32 h-1 bg-yellow-400 mx-auto rounded-full"></div>
+          <p className="text-white/80 mt-2 text-lg">¡Atrapa todos los Pokémon!</p>
         </div>
-      )}
-      
-      {selectedPokemon && (
-        <PokemonDetail
-          pokemon={selectedPokemon}
-          onClose={handleCloseDetail}
-        />
-      )}
+
+        <SearchBar onSearch={handleSearch} />
+        
+        {error && (
+          <div className="bg-red-700 text-white p-4 rounded-lg text-center my-4 shadow-lg">
+            {error}
+          </div>
+        )}
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+          {filteredPokemons.map((pokemon) => (
+            <PokemonCard
+              key={pokemon.id}
+              pokemon={pokemon}
+              onClick={() => handlePokemonClick(pokemon)}
+            />
+          ))}
+        </div>
+        
+        {loading && (
+          <div className="flex justify-center items-center my-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+          </div>
+        )}
+        
+        {hasMore && !loading && filteredPokemons.length === pokemons.length && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={loadMore}
+              className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 
+                font-bold py-3 px-8 rounded-full shadow-lg 
+                transform hover:scale-105 transition-all duration-300
+                border-2 border-white/50 hover:border-white
+                text-lg tracking-wider"
+            >
+              Cargar más Pokémon ↓
+            </button>
+          </div>
+        )}
+        
+        {filteredPokemons.length === 0 && !loading && (
+          <div className="text-center text-white text-xl my-8 p-8 bg-black/30 rounded-lg backdrop-blur-sm">
+            No se encontraron Pokémon con "{searchTerm}"
+          </div>
+        )}
+        
+        {selectedPokemon && (
+          <PokemonDetail
+            pokemon={selectedPokemon}
+            onClose={handleCloseDetail}
+          />
+        )}
+      </div>
     </div>
   );
 };
