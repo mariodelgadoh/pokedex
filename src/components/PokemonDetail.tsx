@@ -191,23 +191,23 @@ export const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon, onClose }
   const headerColor = getPokemonHeaderColor();
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4" onClick={onClose}>
       <div className={`${backgroundColor} rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl border border-gray-200`} onClick={(e) => e.stopPropagation()}>
         
         {/* Header con degradado del tipo */}
-        <div className={`${headerColor} px-8 py-6 rounded-t-2xl`}>
-          <div className="flex justify-between items-start">
-            <div>
-              <span className="text-white/80 text-sm font-mono">
+        <div className={`${headerColor} px-4 sm:px-8 py-4 sm:py-6 rounded-t-2xl`}>
+          <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2">
+            <div className="text-center sm:text-left">
+              <span className="text-white/80 text-xs sm:text-sm font-mono block sm:inline">
                 #{pokemon.id.toString().padStart(3, '0')}
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold text-white capitalize mt-1">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white capitalize">
                 {pokemon.name}
               </h2>
             </div>
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white text-3xl w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-all"
+              className="text-white/80 hover:text-white text-2xl sm:text-3xl w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-all absolute top-2 right-2 sm:relative sm:top-0 sm:right-0"
             >
               ×
             </button>
@@ -215,65 +215,65 @@ export const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon, onClose }
         </div>
 
         {/* Contenido */}
-        <div className="p-8">
-          {/* Imagen y tipos */}
-          <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
-            <div className="w-48 h-48 md:w-56 md:h-56 bg-white rounded-2xl p-4 flex items-center justify-center border-4 border-white shadow-xl">
+        <div className="p-4 sm:p-8">
+          {/* Imagen y tipos - Modificado para centrar en móvil pero mantener desktop como antes */}
+          <div className="flex flex-col items-center md:flex-row md:items-start gap-4 sm:gap-8 mb-6 sm:mb-8">
+            <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 bg-white rounded-2xl p-3 sm:p-4 flex items-center justify-center border-4 border-white shadow-xl">
               <img 
                 src={pokemonImage} 
                 alt={pokemon.name}
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="flex-1">
-              <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex-1 text-center md:text-left">
+              <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-3 sm:mb-4">
                 {pokemon.types.map((typeInfo) => (
                   <span
                     key={typeInfo.type.name}
-                    className={`${getTypeColor(typeInfo.type.name)} ${getTypeTextColor(typeInfo.type.name)} px-4 py-2 rounded-full capitalize font-medium shadow-md text-sm tracking-wide`}
+                    className={`${getTypeColor(typeInfo.type.name)} ${getTypeTextColor(typeInfo.type.name)} px-3 py-1.5 sm:px-4 sm:py-2 rounded-full capitalize font-medium shadow-md text-xs sm:text-sm tracking-wide`}
                   >
                     {translateType(typeInfo.type.name)}
                   </span>
                 ))}
               </div>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-600 text-sm sm:text-base md:text-lg">
                 Pokémon de tipo {pokemon.types.map(t => translateType(t.type.name)).join(' y ')}
               </p>
             </div>
           </div>
 
           {/* Tarjetas de información en grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {/* Información Básica */}
-            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 pb-2 border-b border-gray-100 text-center md:text-left">
                 Información Básica
               </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Altura</span>
-                  <span className="text-gray-900 font-medium">{pokemon.height / 10} m</span>
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex justify-between items-center md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
+                  <span className="text-gray-600 text-sm sm:text-base">Altura</span>
+                  <span className="text-gray-900 font-medium text-sm sm:text-base">{pokemon.height / 10} m</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Peso</span>
-                  <span className="text-gray-900 font-medium">{pokemon.weight / 10} kg</span>
+                <div className="flex justify-between items-center md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
+                  <span className="text-gray-600 text-sm sm:text-base">Peso</span>
+                  <span className="text-gray-900 font-medium text-sm sm:text-base">{pokemon.weight / 10} kg</span>
                 </div>
               </div>
             </div>
 
             {/* Habilidades */}
-            <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
+            <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-3 sm:mb-4 pb-2 border-b border-gray-100 text-center md:text-left">
                 Habilidades
               </h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                 {pokemon.abilities.map((abilityInfo) => (
                   <span
                     key={abilityInfo.ability.name}
-                    className="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full capitalize text-sm font-medium"
+                    className="bg-gray-100 text-gray-700 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full capitalize text-xs sm:text-sm font-medium"
                   >
                     {abilityInfo.ability.name.replace('-', ' ')}
-                    {abilityInfo.is_hidden && <span className="ml-1.5 text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">Oculta</span>}
+                    {abilityInfo.is_hidden && <span className="ml-1 text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">Oculta</span>}
                   </span>
                 ))}
               </div>
@@ -281,87 +281,87 @@ export const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon, onClose }
           </div>
 
           {/* Estadísticas Base */}
-          <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-            <h3 className="text-lg font-semibold text-gray-700 mb-5 pb-2 border-b border-gray-100">
+          <div className="bg-white rounded-xl p-4 sm:p-5 border border-gray-100 shadow-sm">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-5 pb-2 border-b border-gray-100 text-center md:text-left">
               Estadísticas Base
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-xs sm:text-sm mb-1 md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
                     <span className="text-gray-600">HP</span>
                     <span className="text-gray-900 font-medium">{mainStats.hp}</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5">
+                  <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
                     <div 
-                      className={`${getStatBarColor(mainStats.hp, 'hp')} h-2.5 rounded-full transition-all duration-500`}
+                      className={`${getStatBarColor(mainStats.hp, 'hp')} h-2 sm:h-2.5 rounded-full transition-all duration-500`}
                       style={{ width: `${(mainStats.hp / 255) * 100}%` }}
                     ></div>
                   </div>
                 </div>
                 
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-xs sm:text-sm mb-1 md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
                     <span className="text-gray-600">Ataque</span>
                     <span className="text-gray-900 font-medium">{mainStats.attack}</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5">
+                  <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
                     <div 
-                      className={`${getStatBarColor(mainStats.attack, 'attack')} h-2.5 rounded-full transition-all duration-500`}
+                      className={`${getStatBarColor(mainStats.attack, 'attack')} h-2 sm:h-2.5 rounded-full transition-all duration-500`}
                       style={{ width: `${(mainStats.attack / 255) * 100}%` }}
                     ></div>
                   </div>
                 </div>
                 
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-xs sm:text-sm mb-1 md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
                     <span className="text-gray-600">Defensa</span>
                     <span className="text-gray-900 font-medium">{mainStats.defense}</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5">
+                  <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
                     <div 
-                      className={`${getStatBarColor(mainStats.defense, 'defense')} h-2.5 rounded-full transition-all duration-500`}
+                      className={`${getStatBarColor(mainStats.defense, 'defense')} h-2 sm:h-2.5 rounded-full transition-all duration-500`}
                       style={{ width: `${(mainStats.defense / 255) * 100}%` }}
                     ></div>
                   </div>
                 </div>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-xs sm:text-sm mb-1 md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
                     <span className="text-gray-600">Ataque Esp.</span>
                     <span className="text-gray-900 font-medium">{mainStats.spAttack}</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5">
+                  <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
                     <div 
-                      className={`${getStatBarColor(mainStats.spAttack, 'spAttack')} h-2.5 rounded-full transition-all duration-500`}
+                      className={`${getStatBarColor(mainStats.spAttack, 'spAttack')} h-2 sm:h-2.5 rounded-full transition-all duration-500`}
                       style={{ width: `${(mainStats.spAttack / 255) * 100}%` }}
                     ></div>
                   </div>
                 </div>
                 
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-xs sm:text-sm mb-1 md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
                     <span className="text-gray-600">Defensa Esp.</span>
                     <span className="text-gray-900 font-medium">{mainStats.spDefense}</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5">
+                  <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
                     <div 
-                      className={`${getStatBarColor(mainStats.spDefense, 'spDefense')} h-2.5 rounded-full transition-all duration-500`}
+                      className={`${getStatBarColor(mainStats.spDefense, 'spDefense')} h-2 sm:h-2.5 rounded-full transition-all duration-500`}
                       style={{ width: `${(mainStats.spDefense / 255) * 100}%` }}
                     ></div>
                   </div>
                 </div>
                 
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className="flex justify-between text-xs sm:text-sm mb-1 md:justify-between max-w-xs mx-auto md:mx-0 md:max-w-none">
                     <span className="text-gray-600">Velocidad</span>
                     <span className="text-gray-900 font-medium">{mainStats.speed}</span>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2.5">
+                  <div className="w-full bg-gray-100 rounded-full h-2 sm:h-2.5">
                     <div 
-                      className={`${getStatBarColor(mainStats.speed, 'speed')} h-2.5 rounded-full transition-all duration-500`}
+                      className={`${getStatBarColor(mainStats.speed, 'speed')} h-2 sm:h-2.5 rounded-full transition-all duration-500`}
                       style={{ width: `${(mainStats.speed / 255) * 100}%` }}
                     ></div>
                   </div>
