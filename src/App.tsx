@@ -14,23 +14,23 @@ function App() {
       {!showGames && (
         <button
           onClick={handlePlayClick}
-          className="fixed bottom-6 right-6 z-50
+          className="fixed bottom-4 right-4 z-50
             bg-gradient-to-r from-yellow-400 to-yellow-500
-            text-gray-900 font-bold py-3 pl-4 pr-8 rounded-full
+            text-gray-900 font-bold p-3 rounded-full
             shadow-2xl hover:shadow-3xl
             transform hover:scale-110 transition-all
             border-4 border-red-500
             animate-bounce
-            text-lg sm:text-xl
             touch-manipulation
-            flex items-center gap-2"
+            flex items-center justify-center
+            w-14 h-14 sm:w-auto sm:h-auto sm:px-8 sm:py-3 sm:rounded-full"
         >
           <img 
             src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
             alt="Pikachu"
-            className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-lg"
+            className="w-8 h-8 sm:w-12 sm:h-12 object-contain drop-shadow-lg sm:mr-2"
           />
-          <span>Jugar</span>
+          <span className="hidden sm:inline">Jugar</span>
         </button>
       )}
 
