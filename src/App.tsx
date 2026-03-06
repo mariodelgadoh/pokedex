@@ -1,18 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PokemonList } from './components/PokemonList';
 import { PokemonGames } from './games/PokemonGames';
 
 function App() {
   const [showGames, setShowGames] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Escuchar eventos personalizados para saber cuándo se abre/cierra el modal
+  useEffect(() => {
+    const handleModalOpen = () => setIsModalOpen(true);
+    const handleModalClose = () => setIsModalOpen(false);
+
+    window.addEventListener('pokemonModalOpen', handleModalOpen);
+    window.addEventListener('pokemonModalClose', handleModalClose);
+
+    return () => {
+      window.removeEventListener('pokemonModalOpen', handleModalOpen);
+      window.removeEventListener('pokemonModalClose', handleModalClose);
+    };
+  }, []);
 
   const handlePlayClick = () => {
     setShowGames(true);
   };
 
+  // Mostrar el botón SOLO si:
+  // 1. No estamos en juegos
+  // 2. No hay un modal abierto
+  const shouldShowButton = !showGames && !isModalOpen;
+
   return (
     <div className="min-h-screen">
-      {/* Botón Jugar con z-index más bajo que el modal */}
-      {!showGames && (
+      {/* Botón Jugar - solo visible cuando no hay modal abierto */}
+      {shouldShowButton && (
         <button
           onClick={handlePlayClick}
           className="fixed bottom-6 right-6 z-40

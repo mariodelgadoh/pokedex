@@ -18,7 +18,7 @@ export const PokemonList: React.FC = () => {
   const limit = 20;
 
   // Cargar Pokémon por lotes
-  const loadPokemons = useCallback(async (offset: number) => {
+  const loadPokemons = useCallback(async (offset: number, reset: boolean = false) => {
     try {
       setLoading(true);
       const listResponse = await pokemonApi.getPokemonList(limit, offset);
@@ -27,8 +27,17 @@ export const PokemonList: React.FC = () => {
         listResponse.results.map(p => p.url)
       );
       
-      setPokemons(prev => [...prev, ...newPokemonDetails]);
-      setFilteredPokemons(prev => [...prev, ...newPokemonDetails]);
+      if (reset) {
+        // Si es reset, reemplazamos los Pokémon existentes
+        setPokemons(newPokemonDetails);
+        setFilteredPokemons(newPokemonDetails);
+        setCurrentOffset(offset);
+      } else {
+        // Si no es reset, agregamos a los existentes
+        setPokemons(prev => [...prev, ...newPokemonDetails]);
+        setFilteredPokemons(prev => [...prev, ...newPokemonDetails]);
+      }
+      
       setHasMore(!!listResponse.next);
     } catch (err) {
       setError('Error al cargar los Pokémon');
@@ -38,9 +47,22 @@ export const PokemonList: React.FC = () => {
     }
   }, []);
 
-  // Cargar inicial
+  // Cargar inicial (solo cuando el componente se monta)
   useEffect(() => {
-    loadPokemons(0);
+    // Resetear todo cuando el componente se monta
+    setPokemons([]);
+    setFilteredPokemons([]);
+    setCurrentOffset(0);
+    setSearchTerm('');
+    loadPokemons(0, true);
+    
+    // Cleanup function para cuando el componente se desmonta
+    return () => {
+      setPokemons([]);
+      setFilteredPokemons([]);
+      setCurrentOffset(0);
+      setSearchTerm('');
+    };
   }, [loadPokemons]);
 
   // Función de búsqueda
@@ -97,7 +119,7 @@ export const PokemonList: React.FC = () => {
     if (hasMore && !loading) {
       const newOffset = currentOffset + limit;
       setCurrentOffset(newOffset);
-      loadPokemons(newOffset);
+      loadPokemons(newOffset, false);
     }
   };
 
@@ -115,7 +137,7 @@ export const PokemonList: React.FC = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="relative z-10 min-h-screen p-8 pb-32">
+      <div className="relative z-10 min-h-screen p-8 pb-24">
         <div className="max-w-7xl mx-auto">
           {/* Header con estilo vidrio */}
           <div className="text-center mb-8 relative">
