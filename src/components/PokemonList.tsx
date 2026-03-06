@@ -115,7 +115,7 @@ export const PokemonList: React.FC = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="relative z-10 min-h-screen p-8 pb-24">
+      <div className="relative z-10 min-h-screen p-8 pb-32">
         <div className="max-w-7xl mx-auto">
           {/* Header con estilo vidrio */}
           <div className="text-center mb-8 relative">
