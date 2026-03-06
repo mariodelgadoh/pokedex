@@ -113,7 +113,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Buscar Pokémon por nombre... (ej: Pikachu, Charizard)"
+              placeholder="Buscar Pokémon por nombre..."
               value={searchTerm}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
