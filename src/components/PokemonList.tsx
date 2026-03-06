@@ -115,7 +115,7 @@ export const PokemonList: React.FC = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="relative z-10 min-h-screen p-8">
+      <div className="relative z-10 min-h-screen p-8 pb-24">
         <div className="max-w-7xl mx-auto">
           {/* Header con estilo vidrio */}
           <div className="text-center mb-8 relative">
@@ -175,21 +175,26 @@ export const PokemonList: React.FC = () => {
             </div>
           )}
           
+          {/* Botón Cargar más - dentro del flujo normal */}
           {hasMore && !loading && filteredPokemons.length === pokemons.length && (
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-8 mb-8">
               <button
                 onClick={loadMore}
-                className="relative group"
+                className="bg-gradient-to-r from-yellow-400 to-yellow-500
+                  text-gray-900 font-bold px-6 py-3 rounded-full
+                  shadow-2xl hover:shadow-3xl
+                  transform hover:scale-105 transition-all
+                  border-4 border-red-500
+                  text-base sm:text-lg
+                  touch-manipulation
+                  flex items-center gap-2"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full blur-md group-hover:blur-xl transition-all"></div>
-                <div className="relative bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 
-                  font-bold py-3 px-8 rounded-full shadow-lg 
-                  transform hover:scale-105 transition-all duration-300
-                  border-2 border-white
-                  text-lg tracking-wider"
-                >
-                  Cargar más Pokémon ↓
-                </div>
+                <img 
+                  src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+                  alt="Pikachu"
+                  className="w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-lg"
+                />
+                <span>Cargar más Pokémon ↓</span>
               </button>
             </div>
           )}
