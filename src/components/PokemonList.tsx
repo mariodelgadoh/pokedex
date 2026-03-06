@@ -48,12 +48,10 @@ export const PokemonList: React.FC = () => {
     setSearchTerm(term);
     
     if (term.trim() === '') {
-      // Si el término está vacío, restaurar todos los Pokémon cargados
       setFilteredPokemons(pokemons);
       return;
     }
 
-    // Buscar en los Pokémon ya cargados
     const localFiltered = pokemons.filter(pokemon =>
       pokemon.name.toLowerCase().includes(term.toLowerCase())
     );
@@ -61,7 +59,6 @@ export const PokemonList: React.FC = () => {
     if (localFiltered.length > 0) {
       setFilteredPokemons(localFiltered);
     } else {
-      // Si no se encuentra localmente, buscar en la API
       try {
         setLoading(true);
         const pokemon = await pokemonApi.getPokemonDetail(term.toLowerCase());
@@ -74,7 +71,6 @@ export const PokemonList: React.FC = () => {
     }
   };
 
-  // Limpiar búsqueda y restaurar todos los Pokémon
   const handleClearSearch = () => {
     setSearchTerm('');
     setFilteredPokemons(pokemons);
@@ -106,75 +102,111 @@ export const PokemonList: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-500 via-red-600 to-blue-600 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8 relative">
-          <h1 className="text-6xl font-bold text-white mb-2 drop-shadow-lg 
-            [text-shadow:_0_4px_0_#3B4CCA,_0_8px_8px_rgba(0,0,0,0.3)]">
-            POKÉDEX
-          </h1>
-          <div className="w-32 h-1 bg-yellow-400 mx-auto rounded-full"></div>
-          <p className="text-white/80 mt-2 text-lg">
-            Mostrando {filteredPokemons.length} Pokémon
-            {searchTerm && ` (buscando: "${searchTerm}")`}
-          </p>
-        </div>
+    <div 
+      className="min-h-screen bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('/images/forest-bg.jpg')" }}
+    >
+      {/* Capa decorativa con patrón de Pokeballs */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full border-8 border-white"></div>
+        <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full border-8 border-white"></div>
+        <div className="absolute top-1/2 left-1/4 w-24 h-24 rounded-full border-8 border-white"></div>
+      </div>
 
-        <SearchBar 
-          onSearch={handleSearch} 
-          onSelectPokemon={handleSelectPokemon}
-          onClearSearch={handleClearSearch}
-        />
-        
-        {error && (
-          <div className="bg-red-700 text-white p-4 rounded-lg text-center my-4 shadow-lg">
-            {error}
+      {/* Contenido principal */}
+      <div className="relative z-10 min-h-screen p-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Header con estilo vidrio */}
+          <div className="text-center mb-8 relative">
+            <div className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-3xl -m-4"></div>
+            <div className="relative py-6">
+              <h1 className="text-6xl font-bold text-white mb-2 drop-shadow-lg 
+                [text-shadow:_0_4px_0_#3B4CCA,_0_8px_8px_rgba(0,0,0,0.5)]">
+                POKÉDEX
+              </h1>
+              <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-500 mx-auto rounded-full"></div>
+              <p className="text-white/90 mt-2 text-lg font-semibold drop-shadow-md">
+                ¡Explora el mundo Pokémon!
+              </p>
+              <p className="text-white/80 text-sm mt-1">
+                Mostrando {filteredPokemons.length} Pokémon
+                {searchTerm && ` • Buscando: "${searchTerm}"`}
+              </p>
+            </div>
           </div>
-        )}
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
-          {filteredPokemons.map((pokemon) => (
-            <PokemonCard
-              key={pokemon.id}
-              pokemon={pokemon}
-              onClick={() => handlePokemonClick(pokemon)}
+
+          {/* Buscador con estilo acorde */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-full -m-1"></div>
+            <div className="relative">
+              <SearchBar 
+                onSearch={handleSearch} 
+                onSelectPokemon={handleSelectPokemon}
+                onClearSearch={handleClearSearch}
+              />
+            </div>
+          </div>
+          
+          {error && (
+            <div className="relative mt-4 bg-red-500/80 backdrop-blur-md text-white p-4 rounded-lg text-center shadow-lg border-2 border-yellow-400">
+              {error}
+            </div>
+          )}
+          
+          {/* Grid de Pokémon con tarjetas semitransparentes */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
+            {filteredPokemons.map((pokemon) => (
+              <PokemonCard
+                key={pokemon.id}
+                pokemon={pokemon}
+                onClick={() => handlePokemonClick(pokemon)}
+              />
+            ))}
+          </div>
+          
+          {loading && (
+            <div className="flex flex-col justify-center items-center my-12">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-yellow-400 border-t-transparent"></div>
+                <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 border-4 border-white opacity-20"></div>
+              </div>
+              <p className="text-white mt-4 font-semibold drop-shadow-lg">Cargando Pokémon...</p>
+            </div>
+          )}
+          
+          {hasMore && !loading && filteredPokemons.length === pokemons.length && (
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={loadMore}
+                className="relative group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full blur-md group-hover:blur-xl transition-all"></div>
+                <div className="relative bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 
+                  font-bold py-3 px-8 rounded-full shadow-lg 
+                  transform hover:scale-105 transition-all duration-300
+                  border-2 border-white
+                  text-lg tracking-wider"
+                >
+                  Cargar más Pokémon ↓
+                </div>
+              </button>
+            </div>
+          )}
+          
+          {filteredPokemons.length === 0 && searchTerm && (
+            <div className="relative mt-8 bg-black/40 backdrop-blur-md text-white text-xl p-8 rounded-lg border-2 border-yellow-400 text-center">
+              No se encontró ningún Pokémon llamado "{searchTerm}"
+            </div>
+          )}
+          
+          {selectedPokemon && (
+            <PokemonDetail
+              pokemon={selectedPokemon}
+              onClose={handleCloseDetail}
             />
-          ))}
+          )}
         </div>
-        
-        {loading && (
-          <div className="flex justify-center items-center my-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
-          </div>
-        )}
-        
-        {hasMore && !loading && filteredPokemons.length === pokemons.length && (
-          <div className="flex justify-center mt-8">
-            <button
-              onClick={loadMore}
-              className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 
-                font-bold py-3 px-8 rounded-full shadow-lg 
-                transform hover:scale-105 transition-all duration-300
-                border-2 border-white/50 hover:border-white
-                text-lg tracking-wider"
-            >
-              Cargar más Pokémon ↓
-            </button>
-          </div>
-        )}
-        
-        {filteredPokemons.length === 0 && searchTerm && (
-          <div className="text-center text-white text-xl my-8 p-8 bg-black/30 rounded-lg backdrop-blur-sm">
-            No se encontró ningún Pokémon llamado "{searchTerm}"
-          </div>
-        )}
-        
-        {selectedPokemon && (
-          <PokemonDetail
-            pokemon={selectedPokemon}
-            onClose={handleCloseDetail}
-          />
-        )}
       </div>
     </div>
   );
