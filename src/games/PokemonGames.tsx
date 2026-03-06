@@ -7,6 +7,10 @@ type GameMode = 'menu' | 'guess' | 'memory';
 export const PokemonGames: React.FC = () => {
   const [gameMode, setGameMode] = useState<GameMode>('menu');
 
+  const goToPokedex = () => {
+    window.location.href = '/';
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
       {gameMode === 'menu' && (
@@ -68,7 +72,7 @@ export const PokemonGames: React.FC = () => {
 
             <div className="text-center mt-6 sm:mt-8">
               <button
-                onClick={() => window.location.href = '/'}
+                onClick={goToPokedex}
                 className="bg-red-500 text-white font-bold py-2 sm:py-3 px-6 sm:px-8 rounded-full text-sm sm:text-base
                   hover:bg-red-600 transition-all transform hover:scale-105
                   shadow-lg border-2 border-white"
@@ -81,32 +85,14 @@ export const PokemonGames: React.FC = () => {
       )}
 
       {gameMode === 'guess' && (
-        <div className="relative">
-          <button
-            onClick={() => setGameMode('menu')}
-            className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10
-              bg-red-500 text-white font-bold py-1 sm:py-2 px-3 sm:px-4 rounded-full text-xs sm:text-sm
-              hover:bg-red-600 transition-all
-              shadow-lg border-2 border-white"
-          >
-            ← Menu
-          </button>
-          <GuessThePokemon />
+        <div>
+          <GuessThePokemon onBackToMenu={() => setGameMode('menu')} />
         </div>
       )}
 
       {gameMode === 'memory' && (
-        <div className="relative">
-          <button
-            onClick={() => setGameMode('menu')}
-            className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10
-              bg-red-500 text-white font-bold py-1 sm:py-2 px-3 sm:px-4 rounded-full text-xs sm:text-sm
-              hover:bg-red-600 transition-all
-              shadow-lg border-2 border-white"
-          >
-            ← Menu
-          </button>
-          <PokemonMemory />
+        <div>
+          <PokemonMemory onBackToMenu={() => setGameMode('menu')} />
         </div>
       )}
     </div>
