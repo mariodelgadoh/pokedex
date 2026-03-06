@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { pokemonApi } from '../services/pokemonApi';
 import { Pokemon } from '../types/pokemon.types';
 
 interface Card {
   id: string;
-  pokemon: Pokemon;
+  pokemonId: number;
+  pokemonName: string;
+  pokemonImage: string;
   matched: boolean;
   flipped: boolean;
 }
@@ -12,6 +14,20 @@ interface Card {
 interface PokemonMemoryProps {
   onBackToMenu?: () => void;
 }
+
+// Rangos de generaciones
+const generations = [
+  { name: 'Kanto (1ª Gen)', start: 1, end: 151 },
+  { name: 'Johto (2ª Gen)', start: 152, end: 251 },
+  { name: 'Hoenn (3ª Gen)', start: 252, end: 386 },
+  { name: 'Sinnoh (4ª Gen)', start: 387, end: 493 },
+  { name: 'Teselia (5ª Gen)', start: 494, end: 649 },
+  { name: 'Kalos (6ª Gen)', start: 650, end: 721 },
+  { name: 'Alola (7ª Gen)', start: 722, end: 809 },
+  { name: 'Galar (8ª Gen)', start: 810, end: 905 },
+  { name: 'Paldea (9ª Gen)', start: 906, end: 1025 },
+  { name: 'Todas las generaciones', start: 1, end: 1300 }
+];
 
 export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) => {
   const [cards, setCards] = useState<Card[]>([]);
@@ -22,37 +38,51 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
   const [disabled, setDisabled] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedGeneration, setSelectedGeneration] = useState<number>(0);
+  const [showGenerationSelector, setShowGenerationSelector] = useState(true);
 
-  useEffect(() => {
-    initializeGame();
-  }, []);
-
-  const initializeGame = async () => {
+  // Función para inicializar el juego con la generación seleccionada
+  const initializeGame = useCallback(async () => {
     setLoading(true);
     try {
+      const gen = generations[selectedGeneration];
+      const minId = gen.start;
+      const maxId = gen.end;
+      
       const pokemonList: Pokemon[] = [];
       const usedIds = new Set();
       
       while (pokemonList.length < 6) {
-        const randomId = Math.floor(Math.random() * 151) + 1;
+        const randomId = Math.floor(Math.random() * (maxId - minId + 1)) + minId;
         if (!usedIds.has(randomId)) {
           usedIds.add(randomId);
-          const pokemon = await pokemonApi.getPokemonDetail(randomId);
-          pokemonList.push(pokemon);
+          try {
+            const pokemon = await pokemonApi.getPokemonDetail(randomId);
+            pokemonList.push(pokemon);
+          } catch (error) {
+            console.log(`Error loading pokemon ${randomId}, trying another...`);
+          }
         }
       }
 
       const cardPairs: Card[] = [];
       pokemonList.forEach((pokemon) => {
+        const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_default 
+          || pokemon.sprites.front_default;
+          
         cardPairs.push({
           id: `${pokemon.id}-a`,
-          pokemon,
+          pokemonId: pokemon.id,
+          pokemonName: pokemon.name,
+          pokemonImage: imageUrl,
           matched: false,
           flipped: false
         });
         cardPairs.push({
           id: `${pokemon.id}-b`,
-          pokemon,
+          pokemonId: pokemon.id,
+          pokemonName: pokemon.name,
+          pokemonImage: imageUrl,
           matched: false,
           flipped: false
         });
@@ -60,11 +90,26 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
 
       const shuffledCards = cardPairs.sort(() => Math.random() - 0.5);
       setCards(shuffledCards);
+      setMoves(0);
+      setMatches(0);
+      setGameComplete(false);
     } catch (error) {
       console.error('Error initializing game:', error);
     } finally {
       setLoading(false);
     }
+  }, [selectedGeneration]);
+
+  // Efecto para inicializar juego cuando se selecciona una generación
+  useEffect(() => {
+    if (!showGenerationSelector) {
+      initializeGame();
+    }
+  }, [showGenerationSelector, initializeGame]);
+
+  const handleGenerationSelect = (index: number) => {
+    setSelectedGeneration(index);
+    setShowGenerationSelector(false);
   };
 
   const handleCardClick = (clickedCard: Card) => {
@@ -82,10 +127,10 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
       setDisabled(true);
       setMoves(moves + 1);
 
-      if (firstCard.pokemon.id === clickedCard.pokemon.id) {
+      if (firstCard.pokemonId === clickedCard.pokemonId) {
         setTimeout(() => {
           const matchedCards = cards.map(card =>
-            card.pokemon.id === firstCard.pokemon.id
+            card.pokemonId === firstCard.pokemonId
               ? { ...card, matched: true, flipped: true }
               : card
           );
@@ -115,11 +160,6 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
     }
   };
 
-  const getPokemonImage = (pokemon: Pokemon) => {
-    return pokemon.sprites.other?.['official-artwork']?.front_default 
-      || pokemon.sprites.front_default;
-  };
-
   const renderCardBack = () => {
     return (
       <div className="w-full h-full rounded-xl shadow-lg border-4 border-yellow-400 overflow-hidden cursor-pointer hover:scale-105 transition-transform">
@@ -133,13 +173,11 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
   };
 
   const renderCardFront = (card: Card) => {
-    const pokemon = card.pokemon;
-    
     return (
       <div className="w-full h-full bg-white rounded-xl shadow-lg border-4 border-yellow-400 overflow-hidden cursor-pointer hover:scale-105 transition-transform p-1 flex items-center justify-center">
         <img 
-          src={getPokemonImage(pokemon)} 
-          alt={pokemon.name}
+          src={card.pokemonImage} 
+          alt={card.pokemonName}
           className="w-full h-full object-contain"
         />
       </div>
@@ -154,24 +192,80 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
   };
 
   const restartGame = () => {
+    setShowGenerationSelector(true);
     setCards([]);
-    setMoves(0);
-    setMatches(0);
-    setFirstCard(null);
-    setSecondCard(null);
-    setDisabled(false);
-    setGameComplete(false);
-    initializeGame();
   };
 
   const goToPokedex = () => {
     window.location.href = '/';
   };
 
+  const closeSelector = () => {
+    setShowGenerationSelector(false);
+    if (selectedGeneration === undefined) {
+      setSelectedGeneration(0);
+    }
+  };
+
+  if (showGenerationSelector) {
+    return (
+      <div 
+        className="min-h-screen bg-cover bg-center bg-fixed"
+        style={{ backgroundImage: "url('/images/forest-bg.jpg')" }}
+      >
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-2xl w-full border-4 border-yellow-400 shadow-2xl relative">
+            
+            {/* Botón de cerrar */}
+            <button
+              onClick={closeSelector}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all"
+            >
+              ×
+            </button>
+
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+              Selecciona una generación
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {generations.map((gen, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleGenerationSelect(index)}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 
+                    text-white font-bold py-4 px-4 rounded-xl
+                    hover:from-blue-600 hover:to-purple-700
+                    transition-all transform hover:scale-105 active:scale-95
+                    shadow-lg border-2 border-white
+                    text-base sm:text-lg
+                    touch-manipulation"
+                >
+                  {gen.name}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={goToPokedex}
+              className="w-full mt-4 bg-gradient-to-r from-red-500 to-red-600 
+                text-white font-bold py-3 px-6 rounded-full text-base sm:text-lg
+                hover:from-red-600 hover:to-red-700
+                transition-all transform hover:scale-105 active:scale-95
+                shadow-lg border-2 border-white
+                touch-manipulation"
+            >
+              Volver a la Pokédex
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-green-500 border-t-transparent"></div>
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-green-500 border-t-transparent mb-4"></div>
+        <p className="text-white text-lg">Cargando Pokémon de {generations[selectedGeneration].name}...</p>
       </div>
     );
   }
@@ -191,6 +285,9 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
               [text-shadow:_2px_2px_0_#3B4CCA,_3px_3px_0_#00000030]">
               Memorama Pokémon
             </h1>
+            <p className="text-yellow-400 font-semibold mb-2">
+              {generations[selectedGeneration].name}
+            </p>
             <div className="flex flex-row justify-center gap-4 text-white mt-2">
               <div className="bg-red-600 px-5 py-1.5 rounded-full shadow-lg text-lg font-bold border-2 border-white">
                 Movimientos: {moves}
@@ -203,7 +300,7 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
 
           {!gameComplete ? (
             <>
-              {/* Grid de cartas - Área principal que ocupa el espacio disponible */}
+              {/* Grid de cartas */}
               <div className="flex-1 flex items-center justify-center my-2">
                 <div className="grid grid-cols-4 gap-2 sm:gap-3 justify-items-center">
                   {cards.map((card) => (
@@ -218,17 +315,18 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
                 </div>
               </div>
 
-              {/* Botones - Reiniciar, Menú y Pokédex */}
+              {/* Botones - SOLO 3 BOTONES en grid */}
               <div className="mt-auto pt-4 pb-2">
-                <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={restartGame}
                     className="bg-gradient-to-r from-yellow-400 to-orange-500 
-                      text-gray-900 font-bold py-3 px-6 rounded-full text-base sm:text-lg
+                      text-gray-900 font-bold py-3 px-2 rounded-full text-sm sm:text-base
                       hover:from-yellow-500 hover:to-orange-600
                       transition-all transform hover:scale-105 active:scale-95
-                      shadow-lg border-2 border-white w-full sm:w-36
-                      touch-manipulation"
+                      shadow-lg border-2 border-white
+                      touch-manipulation
+                      whitespace-nowrap"
                   >
                     Reiniciar
                   </button>
@@ -237,11 +335,12 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
                     <button
                       onClick={onBackToMenu}
                       className="bg-gradient-to-r from-blue-500 to-purple-600 
-                        text-white font-bold py-3 px-6 rounded-full text-base sm:text-lg
+                        text-white font-bold py-3 px-2 rounded-full text-sm sm:text-base
                         hover:from-blue-600 hover:to-purple-700
                         transition-all transform hover:scale-105 active:scale-95
-                        shadow-lg border-2 border-white w-full sm:w-36
-                        touch-manipulation"
+                        shadow-lg border-2 border-white
+                        touch-manipulation
+                        whitespace-nowrap"
                     >
                       Menú
                     </button>
@@ -250,11 +349,12 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
                   <button
                     onClick={goToPokedex}
                     className="bg-gradient-to-r from-red-500 to-red-600 
-                      text-white font-bold py-3 px-6 rounded-full text-base sm:text-lg
+                      text-white font-bold py-3 px-2 rounded-full text-sm sm:text-base
                       hover:from-red-600 hover:to-red-700
                       transition-all transform hover:scale-105 active:scale-95
-                      shadow-lg border-2 border-white w-full sm:w-36
-                      touch-manipulation"
+                      shadow-lg border-2 border-white
+                      touch-manipulation
+                      whitespace-nowrap"
                   >
                     Pokédex
                   </button>
@@ -262,45 +362,60 @@ export const PokemonMemory: React.FC<PokemonMemoryProps> = ({ onBackToMenu }) =>
               </div>
             </>
           ) : (
-            /* Pantalla de victoria */
+            /* Pantalla de victoria - CON BOTONES COMO EN LA IMAGEN */
             <div className="flex-1 flex items-center justify-center">
-              <div className="bg-black/60 backdrop-blur-md rounded-2xl p-8 max-w-md mx-auto text-center border-4 border-yellow-400">
-                <h2 className="text-3xl text-yellow-400 font-bold mb-3 animate-bounce">
+              <div className="bg-gradient-to-br from-purple-900 to-indigo-900 backdrop-blur-md rounded-3xl p-8 max-w-md mx-auto text-center border-4 border-yellow-400 shadow-2xl">
+                <h2 className="text-4xl text-yellow-400 font-bold mb-4 animate-bounce">
                   ¡Felicidades!
                 </h2>
-                <p className="text-white text-xl mb-6">
-                  Completaste el memorama en {moves} movimientos
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                
+                <div className="bg-white/10 rounded-xl p-4 mb-6">
+                  <p className="text-white text-2xl font-bold">
+                    {moves} movimientos
+                  </p>
+                  <p className="text-yellow-300 text-sm mt-1">
+                    {generations[selectedGeneration].name}
+                  </p>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row justify-center gap-3">
                   <button
                     onClick={restartGame}
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 
-                      text-white font-bold py-3 px-6 rounded-full text-base sm:text-lg
-                      hover:from-green-600 hover:to-emerald-600
-                      transform hover:scale-105 active:scale-95 transition-all
-                      shadow-lg border-2 border-white w-full sm:w-36"
+                    className="bg-gradient-to-r from-green-500 to-green-600 
+                      text-white font-bold px-6 py-3 rounded-full text-base
+                      hover:from-green-600 hover:to-green-700
+                      transform hover:scale-105 transition-all
+                      shadow-lg border-2 border-white
+                      touch-manipulation
+                      flex-1"
                   >
                     Jugar de nuevo
                   </button>
+                  
                   {onBackToMenu && (
                     <button
                       onClick={onBackToMenu}
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 
-                        text-white font-bold py-3 px-6 rounded-full text-base sm:text-lg
-                        hover:from-blue-600 hover:to-purple-700
-                        transform hover:scale-105 active:scale-95 transition-all
-                        shadow-lg border-2 border-white w-full sm:w-36"
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 
+                        text-white font-bold px-6 py-3 rounded-full text-base
+                        hover:from-blue-600 hover:to-blue-700
+                        transform hover:scale-105 transition-all
+                        shadow-lg border-2 border-white
+                        touch-manipulation
+                        flex-1"
                     >
                       Menú
                     </button>
                   )}
+
                   <button
                     onClick={goToPokedex}
                     className="bg-gradient-to-r from-red-500 to-red-600 
-                      text-white font-bold py-3 px-6 rounded-full text-base sm:text-lg
+                      text-white font-bold px-6 py-3 rounded-full text-base
                       hover:from-red-600 hover:to-red-700
-                      transform hover:scale-105 active:scale-95 transition-all
-                      shadow-lg border-2 border-white w-full sm:w-36"
+                      transform hover:scale-105 transition-all
+                      shadow-lg border-2 border-white
+                      touch-manipulation
+                      flex-1"
                   >
                     Pokédex
                   </button>
