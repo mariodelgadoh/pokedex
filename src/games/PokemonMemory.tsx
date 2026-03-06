@@ -140,73 +140,86 @@ export const PokemonMemory: React.FC = () => {
     return colors[type] || 'bg-gray-400';
   };
 
-  const renderCard = (card: Card) => {
-    if (!card.flipped && !card.matched) {
-      // Dorso de la carta - responsivo
-      return (
-        <div className="w-20 h-28 xs:w-24 xs:h-32 sm:w-28 sm:h-36 md:w-32 md:h-44 
-          bg-gradient-to-br from-red-500 to-blue-600 rounded-lg sm:rounded-xl shadow-lg 
-          border-2 sm:border-4 border-yellow-400 flex items-center justify-center 
-          cursor-pointer hover:scale-105 transition-transform mx-auto">
-          <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 
-            bg-white/30 rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 
-              bg-white/50 rounded-full"></div>
-          </div>
+  const renderCardBack = () => {
+    // Diseño de la parte trasera según la imagen (Pokemon dos veces)
+    return (
+      <div className="w-full h-full bg-gradient-to-br from-red-500 to-red-700 rounded-xl shadow-lg border-4 border-yellow-400 flex flex-col items-center justify-center p-1 sm:p-2">
+        {/* Círculo superior estilo pokebola */}
+        <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center mb-0.5 sm:mb-1 shadow-inner">
+          <div className="w-2 h-2 xs:w-3 xs:h-3 sm:w-3 sm:h-3 md:w-4 md:h-4 bg-red-500 rounded-full border border-gray-300"></div>
         </div>
-      );
-    }
+        
+        {/* Texto POKEMON en dos líneas como la imagen */}
+        <div className="text-center leading-tight">
+          <div className="text-white font-bold text-[8px] xs:text-[9px] sm:text-xs md:text-sm tracking-wider">POKEMON</div>
+          <div className="text-white font-bold text-[8px] xs:text-[9px] sm:text-xs md:text-sm tracking-wider mt-0">POKEMON</div>
+        </div>
+        
+        {/* Círculo inferior */}
+        <div className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-white rounded-full flex items-center justify-center mt-0.5 sm:mt-1 shadow-inner">
+          <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 sm:w-2 sm:h-2 md:w-2.5 md:h-2.5 bg-red-500 rounded-full"></div>
+        </div>
+      </div>
+    );
+  };
 
-    // Carta mostrada - responsivo
+  const renderCardFront = (card: Card) => {
     const pokemon = card.pokemon;
     const typeColor = getTypeColor(pokemon.types[0]?.type.name || 'normal');
     const hp = pokemon.stats.find(s => s.stat.name === 'hp')?.base_stat || 60;
     const attack = pokemon.stats.find(s => s.stat.name === 'attack')?.base_stat || 50;
     
     return (
-      <div className="w-20 h-28 xs:w-24 xs:h-32 sm:w-28 sm:h-36 md:w-32 md:h-44 
-        bg-white rounded-lg sm:rounded-xl shadow-lg border border-gray-300 
-        p-1 sm:p-2 flex flex-col cursor-pointer hover:scale-105 transition-transform mx-auto">
-        
-        {/* Nombre y HP - tamaños responsivos */}
-        <div className="flex justify-between items-center text-[8px] xs:text-[9px] sm:text-[10px] md:text-xs">
-          <span className="font-bold capitalize truncate max-w-[50px] xs:max-w-[60px] sm:max-w-[70px]">
+      <div className="w-full h-full bg-white rounded-xl shadow-lg border-2 border-gray-300 p-1 flex flex-col">
+        {/* Nombre y HP */}
+        <div className="flex justify-between items-center text-[7px] xs:text-[8px] sm:text-[9px] md:text-[10px]">
+          <span className="font-bold capitalize truncate max-w-[35px] xs:max-w-[40px] sm:max-w-[45px] md:max-w-[50px]">
             {pokemon.name}
           </span>
-          <span className="text-red-600 font-bold">{hp}</span>
+          <span className="text-red-600 font-bold text-[7px] xs:text-[8px] sm:text-[9px] md:text-[10px]">{hp}</span>
         </div>
 
-        {/* Imagen - responsiva */}
-        <div className={`${typeColor} bg-opacity-30 rounded-lg p-0.5 sm:p-1 my-0.5 sm:my-1 
-          h-8 xs:h-10 sm:h-12 md:h-14 flex items-center justify-center`}>
+        {/* Imagen con fondo de tipo */}
+        <div className={`${typeColor} bg-opacity-30 rounded-lg p-0.5 my-0.5 
+          h-7 xs:h-8 sm:h-9 md:h-10 flex items-center justify-center`}>
           <img 
             src={getPokemonImage(pokemon)} 
             alt={pokemon.name}
-            className="h-6 xs:h-8 sm:h-10 md:h-12 w-6 xs:w-8 sm:w-10 md:w-12 object-contain"
+            className="h-5 xs:h-6 sm:h-7 md:h-8 w-5 xs:w-6 sm:w-7 md:w-8 object-contain"
           />
         </div>
 
-        {/* Ataques - tamaños responsivos */}
-        <div className="text-[6px] xs:text-[7px] sm:text-[8px] md:text-[10px] mt-0.5 sm:mt-1">
-          <div className="flex justify-between border-b border-gray-200">
-            <span className="truncate max-w-[40px] xs:max-w-[50px] sm:max-w-[60px]">Claw Slash</span>
-            <span className="bg-gray-200 px-0.5 rounded">20+</span>
+        {/* Ataques */}
+        <div className="text-[5px] xs:text-[6px] sm:text-[7px] md:text-[8px] mt-0.5">
+          <div className="flex justify-between border-b border-gray-200 pb-0.5">
+            <span className="truncate max-w-[30px] xs:max-w-[35px] sm:max-w-[40px] md:max-w-[45px]">Claw Slash</span>
+            <span className="bg-gray-200 px-0.5 rounded text-[5px] xs:text-[6px] sm:text-[7px]">20+</span>
           </div>
-          <div className="flex justify-between">
-            <span className="truncate max-w-[40px] xs:max-w-[50px] sm:max-w-[60px]">Fire Spin</span>
-            <span className="bg-gray-200 px-0.5 rounded">20</span>
+          <div className="flex justify-between pt-0.5">
+            <span className="truncate max-w-[30px] xs:max-w-[35px] sm:max-w-[40px] md:max-w-[45px]">Fire Spin</span>
+            <span className="bg-gray-200 px-0.5 rounded text-[5px] xs:text-[6px] sm:text-[7px]">20</span>
           </div>
         </div>
 
-        {/* Estadísticas - tamaños responsivos */}
-        <div className="flex justify-between text-[5px] xs:text-[6px] sm:text-[7px] md:text-[8px] mt-0.5 sm:mt-1 text-gray-600">
+        {/* Estadísticas */}
+        <div className="flex justify-between text-[4px] xs:text-[5px] sm:text-[6px] md:text-[7px] mt-0.5 text-gray-600">
           <span>ATA {attack}</span>
-          <span className={`${typeColor} text-white px-0.5 rounded capitalize truncate max-w-[30px] xs:max-w-[35px] sm:max-w-[40px]`}>
+          <span className={`${typeColor} text-white px-0.5 rounded capitalize truncate max-w-[20px] xs:max-w-[25px] sm:max-w-[30px]`}>
             {pokemon.types[0]?.type.name}
           </span>
         </div>
       </div>
     );
+  };
+
+  const renderCard = (card: Card) => {
+    if (!card.flipped && !card.matched) {
+      // Parte trasera de la carta
+      return renderCardBack();
+    }
+
+    // Parte frontal de la carta
+    return renderCardFront(card);
   };
 
   const restartGame = () => {
@@ -229,60 +242,74 @@ export const PokemonMemory: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-800 to-emerald-900 p-2 sm:p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-800 to-emerald-900 p-1 sm:p-2 md:p-3 lg:p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-4 sm:mb-6 md:mb-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-4 drop-shadow-lg">
+        {/* Header mejorado para móvil */}
+        <div className="text-center mb-1 sm:mb-2 md:mb-3">
+          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1 drop-shadow-lg">
             Memorama Pokemon
           </h2>
-          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 md:gap-8 text-white text-sm sm:text-base md:text-xl">
-            <div className="bg-green-600 px-4 sm:px-6 py-1 sm:py-2 rounded-full shadow-lg">
-              Movimientos: {moves}
+          <div className="flex flex-row justify-center gap-1 sm:gap-2 md:gap-3 text-white">
+            <div className="bg-green-600 px-2 py-0.5 rounded-full shadow-lg text-[9px] xs:text-[10px] sm:text-xs md:text-sm">
+              <span className="hidden xs:inline">Movimientos:</span> 
+              <span className="xs:hidden font-bold">M:</span> {moves}
             </div>
-            <div className="bg-emerald-600 px-4 sm:px-6 py-1 sm:py-2 rounded-full shadow-lg">
-              Pares: {matches}/6
+            <div className="bg-emerald-600 px-2 py-0.5 rounded-full shadow-lg text-[9px] xs:text-[10px] sm:text-xs md:text-sm">
+              <span className="hidden xs:inline">Pares:</span> 
+              <span className="xs:hidden font-bold">P:</span> {matches}/6
             </div>
           </div>
         </div>
 
         {!gameComplete ? (
           <>
-            <div className="grid grid-cols-3 xs:grid-cols-4 gap-1 sm:gap-2 md:gap-3 justify-items-center">
+            {/* Grid de cartas - 4 columnas para móvil */}
+            <div className="grid grid-cols-4 gap-0.5 xs:gap-1 sm:gap-1.5 md:gap-2 lg:gap-3 justify-items-center">
               {cards.map((card) => (
-                <div key={card.id} onClick={() => handleCardClick(card)}>
+                <div 
+                  key={card.id} 
+                  onClick={() => handleCardClick(card)}
+                  className="w-14 h-20 xs:w-16 xs:h-22 sm:w-20 sm:h-26 md:w-24 md:h-32 lg:w-28 lg:h-36 cursor-pointer hover:scale-105 transition-transform"
+                >
                   {renderCard(card)}
                 </div>
               ))}
             </div>
 
-            <div className="flex justify-center mt-4 sm:mt-6 md:mt-8">
+            {/* Botón de reinicio - Tamaño táctil optimizado */}
+            <div className="flex justify-center mt-2 sm:mt-3 md:mt-4">
               <button
                 onClick={restartGame}
                 className="bg-gradient-to-r from-yellow-400 to-orange-500 
-                  text-gray-900 font-bold py-2 px-4 sm:px-6 rounded-full text-sm sm:text-base
+                  text-gray-900 font-bold py-2 px-4 sm:py-2 sm:px-5 md:py-2 md:px-6 
+                  rounded-full text-xs sm:text-sm md:text-base
                   hover:from-yellow-500 hover:to-orange-600
                   transition-all transform hover:scale-105
-                  shadow-lg"
+                  shadow-lg min-w-[90px] sm:min-w-[100px] md:min-w-[120px]
+                  active:scale-95 touch-manipulation"
               >
-                Reiniciar juego
+                Reiniciar
               </button>
             </div>
           </>
         ) : (
-          <div className="text-center bg-black/50 backdrop-blur-sm rounded-2xl p-4 sm:p-8 md:p-12 mx-2 sm:mx-0">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl text-yellow-400 font-bold mb-2 sm:mb-4 animate-bounce">
+          /* Pantalla de victoria - Optimizada para móvil */
+          <div className="text-center bg-black/50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 mx-1 sm:mx-2">
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-yellow-400 font-bold mb-1 sm:mb-2 animate-bounce">
               Felicidades
             </h3>
-            <p className="text-white text-base sm:text-xl md:text-2xl mb-3 sm:mb-4">
+            <p className="text-white text-xs sm:text-sm md:text-base lg:text-lg mb-2 sm:mb-3">
               Completaste el memorama en {moves} movimientos
             </p>
-            <div className="flex justify-center gap-2 sm:gap-4">
+            <div className="flex justify-center gap-2 sm:gap-3">
               <button
                 onClick={restartGame}
                 className="bg-gradient-to-r from-green-500 to-emerald-500 
-                  text-white font-bold py-2 sm:py-3 px-4 sm:px-8 rounded-full text-sm sm:text-base md:text-xl
+                  text-white font-bold py-2 px-4 sm:py-2 sm:px-5 md:py-2 md:px-6 
+                  rounded-full text-xs sm:text-sm md:text-base
                   hover:from-green-600 hover:to-emerald-600
-                  transform hover:scale-105 transition-all"
+                  transform hover:scale-105 active:scale-95 transition-all
+                  shadow-lg touch-manipulation"
               >
                 Jugar de nuevo
               </button>
