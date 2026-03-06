@@ -6,6 +6,28 @@ interface PokemonDetailProps {
   onClose: () => void;
 }
 
+// Traducción de tipos al español
+const typeTranslations: { [key: string]: string } = {
+  normal: 'Normal',
+  fighting: 'Lucha',
+  flying: 'Volador',
+  poison: 'Veneno',
+  ground: 'Tierra',
+  rock: 'Roca',
+  bug: 'Bicho',
+  ghost: 'Fantasma',
+  steel: 'Acero',
+  fire: 'Fuego',
+  water: 'Agua',
+  grass: 'Planta',
+  electric: 'Eléctrico',
+  psychic: 'Psíquico',
+  ice: 'Hielo',
+  dragon: 'Dragón',
+  dark: 'Siniestro',
+  fairy: 'Hada'
+};
+
 export const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon, onClose }) => {
   // Disparar evento cuando se abre el modal
   useEffect(() => {
@@ -119,6 +141,11 @@ export const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon, onClose }
     return colors[type] || 'text-white';
   };
 
+  // Traducir el tipo al español
+  const translateType = (type: string): string => {
+    return typeTranslations[type] || type;
+  };
+
   const pokemonImage = pokemon.sprites.other?.['official-artwork']?.front_default 
     || pokemon.sprites.front_default;
 
@@ -205,12 +232,12 @@ export const PokemonDetail: React.FC<PokemonDetailProps> = ({ pokemon, onClose }
                     key={typeInfo.type.name}
                     className={`${getTypeColor(typeInfo.type.name)} ${getTypeTextColor(typeInfo.type.name)} px-4 py-2 rounded-full capitalize font-medium shadow-md text-sm tracking-wide`}
                   >
-                    {typeInfo.type.name}
+                    {translateType(typeInfo.type.name)}
                   </span>
                 ))}
               </div>
               <p className="text-gray-600 text-lg">
-                Pokémon de tipo {pokemon.types.map(t => t.type.name).join(' y ')}
+                Pokémon de tipo {pokemon.types.map(t => translateType(t.type.name)).join(' y ')}
               </p>
             </div>
           </div>

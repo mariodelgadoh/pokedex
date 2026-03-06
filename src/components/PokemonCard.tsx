@@ -6,89 +6,96 @@ interface PokemonCardProps {
   onClick: () => void;
 }
 
-const typeColors = {
-  normal: 'bg-gradient-to-br from-[#A8A77A] to-[#C6C6A7]',
-  fire: 'bg-gradient-to-br from-[#EE8130] to-[#F5AC78]',
-  water: 'bg-gradient-to-br from-[#6390F0] to-[#9DB7F5]',
-  electric: 'bg-gradient-to-br from-[#F7D02C] to-[#FAE078]',
-  grass: 'bg-gradient-to-br from-[#7AC74C] to-[#A7DB8D]',
-  ice: 'bg-gradient-to-br from-[#96D9D6] to-[#BCE6E6]',
-  fighting: 'bg-gradient-to-br from-[#C22E28] to-[#D67873]',
-  poison: 'bg-gradient-to-br from-[#A33EA1] to-[#C183C1]',
-  ground: 'bg-gradient-to-br from-[#E2BF65] to-[#EBD69D]',
-  flying: 'bg-gradient-to-br from-[#A98FF3] to-[#C6B7F5]',
-  psychic: 'bg-gradient-to-br from-[#F95587] to-[#FA92B2]',
-  bug: 'bg-gradient-to-br from-[#A6B91A] to-[#C6D16E]',
-  rock: 'bg-gradient-to-br from-[#B6A136] to-[#D1C17D]',
-  ghost: 'bg-gradient-to-br from-[#735797] to-[#A292BC]',
-  dragon: 'bg-gradient-to-br from-[#6F35FC] to-[#A27DFA]',
-  dark: 'bg-gradient-to-br from-[#705746] to-[#A29288]',
-  steel: 'bg-gradient-to-br from-[#B7B7CE] to-[#D1D1E0]',
-  fairy: 'bg-gradient-to-br from-[#D685AD] to-[#F4BDC9]',
+// Traducción de tipos al español
+const typeTranslations: { [key: string]: string } = {
+  normal: 'Normal',
+  fighting: 'Lucha',
+  flying: 'Volador',
+  poison: 'Veneno',
+  ground: 'Tierra',
+  rock: 'Roca',
+  bug: 'Bicho',
+  ghost: 'Fantasma',
+  steel: 'Acero',
+  fire: 'Fuego',
+  water: 'Agua',
+  grass: 'Planta',
+  electric: 'Eléctrico',
+  psychic: 'Psíquico',
+  ice: 'Hielo',
+  dragon: 'Dragón',
+  dark: 'Siniestro',
+  fairy: 'Hada'
 };
 
 export const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
-  const mainType = pokemon.types[0]?.type.name || 'normal';
-  const bgColor = typeColors[mainType as keyof typeof typeColors] || typeColors.normal;
-  
+  const getTypeColor = (type: string): string => {
+    const colors: { [key: string]: string } = {
+      normal: 'bg-gray-400',
+      fire: 'bg-orange-500',
+      water: 'bg-blue-500',
+      electric: 'bg-yellow-400',
+      grass: 'bg-green-500',
+      ice: 'bg-cyan-300',
+      fighting: 'bg-red-700',
+      poison: 'bg-purple-500',
+      ground: 'bg-yellow-700',
+      flying: 'bg-indigo-300',
+      psychic: 'bg-pink-500',
+      bug: 'bg-lime-500',
+      rock: 'bg-yellow-600',
+      ghost: 'bg-purple-700',
+      dragon: 'bg-indigo-600',
+      dark: 'bg-gray-700',
+      steel: 'bg-gray-400',
+      fairy: 'bg-pink-300'
+    };
+    return colors[type] || 'bg-gray-400';
+  };
+
   const pokemonImage = pokemon.sprites.other?.['official-artwork']?.front_default 
-    || pokemon.sprites.front_default 
-    || 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png';
+    || pokemon.sprites.front_default;
+
+  // Traducir el tipo al español
+  const translateType = (type: string): string => {
+    return typeTranslations[type] || type;
+  };
 
   return (
     <div
       onClick={onClick}
-      className={`
-        ${bgColor} 
-        relative overflow-hidden rounded-2xl p-4 
-        shadow-lg hover:shadow-2xl 
-        transform hover:-translate-y-2 hover:scale-105 
-        transition-all duration-300 cursor-pointer
-        border-4 border-white/30 backdrop-blur-sm
-        group
-      `}
+      className="bg-white/90 backdrop-blur-sm rounded-xl p-4 cursor-pointer
+        transform hover:scale-105 transition-all duration-300
+        shadow-lg hover:shadow-xl
+        border-2 border-yellow-400
+        flex flex-col items-center"
     >
-      {/* Efecto de brillo */}
-      <div className="absolute inset-0 bg-gradient-to-t from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      
-      {/* Número Pokémon */}
-      <div className="absolute top-2 right-2 bg-black/30 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-bold">
-        #{pokemon.id.toString().padStart(3, '0')}
-      </div>
-
-      {/* Imagen */}
-      <div className="relative z-10 flex justify-center mb-3">
-        <img
-          src={pokemonImage}
+      <div className="w-24 h-24 sm:w-28 sm:h-28 mb-3 flex items-center justify-center">
+        <img 
+          src={pokemonImage} 
           alt={pokemon.name}
-          className="w-32 h-32 object-contain drop-shadow-xl 
-            group-hover:scale-110 group-hover:rotate-3 
-            transition-all duration-300"
+          className="w-full h-full object-contain"
         />
       </div>
-
-      {/* Nombre */}
-      <h3 className="text-center text-white text-xl font-bold capitalize mb-2 drop-shadow-md">
+      
+      <span className="text-sm text-gray-500 font-bold mb-2">
+        #{pokemon.id.toString().padStart(3, '0')}
+      </span>
+      
+      <h3 className="text-base sm:text-lg font-bold capitalize text-gray-800 mb-3 text-center">
         {pokemon.name}
       </h3>
-
-      {/* Tipos */}
-      <div className="flex gap-2 justify-center">
+      
+      <div className="flex gap-2 flex-wrap justify-center">
         {pokemon.types.map((typeInfo) => (
           <span
             key={typeInfo.type.name}
-            className="px-3 py-1 bg-white/30 backdrop-blur-md rounded-full 
-              text-white text-xs font-semibold uppercase tracking-wider
-              border border-white/50 shadow-lg"
+            className={`${getTypeColor(typeInfo.type.name)} text-white px-3 py-1 rounded-full text-xs sm:text-sm capitalize`}
           >
-            {typeInfo.type.name}
+            {translateType(typeInfo.type.name)}
           </span>
         ))}
       </div>
-
-      {/* Efecto Pokeball */}
-      <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-      <div className="absolute -top-10 -left-10 w-24 h-24 bg-black/10 rounded-full blur-xl"></div>
     </div>
   );
 };
