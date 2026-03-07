@@ -137,7 +137,7 @@ export const PokemonList: React.FC = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="relative z-10 min-h-screen p-8 pb-24">
+      <div className="relative z-10 p-8 pb-40">
         <div className="max-w-7xl mx-auto">
           {/* Header con estilo vidrio */}
           <div className="text-center mb-8 relative">
@@ -176,7 +176,7 @@ export const PokemonList: React.FC = () => {
             </div>
           )}
           
-          {/* Grid de Pokémon con tarjetas semitransparentes */}
+          {/* Grid de Pokémon */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
             {filteredPokemons.map((pokemon) => (
               <PokemonCard
@@ -197,9 +197,9 @@ export const PokemonList: React.FC = () => {
             </div>
           )}
           
-          {/* Botón Cargar más - dentro del flujo normal */}
+          {/* Botón Cargar más - con margen inferior extra */}
           {hasMore && !loading && filteredPokemons.length === pokemons.length && (
-            <div className="flex justify-center mt-8 mb-8">
+            <div className="flex justify-center mt-8 mb-16">
               <button
                 onClick={loadMore}
                 className="bg-gradient-to-r from-yellow-400 to-yellow-500

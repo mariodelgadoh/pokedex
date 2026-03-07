@@ -30,31 +30,43 @@ function App() {
   const shouldShowButton = !showGames && !isModalOpen;
 
   return (
-    <div className="min-h-screen">
-      {/* Botón Jugar - solo visible cuando no hay modal abierto */}
+    <div className="min-h-screen flex flex-col">
+      {/* Contenido principal */}
+      <div className="flex-1">
+        {showGames ? <PokemonGames /> : <PokemonList />}
+      </div>
+
+      {/* Pie de página - SIN MARGEN SUPERIOR para eliminar espacio blanco */}
+      {!isModalOpen && !showGames && (
+        <footer className="bg-black/60 backdrop-blur-sm py-4 text-center relative z-10">
+          <p className="text-white/80 text-sm sm:text-base">
+            Creado por <span className="font-bold text-yellow-400">Mario Jesús Delgado Hernández</span>
+          </p>
+        </footer>
+      )}
+
+      {/* Botón Jugar - flotando sobre el contenido */}
       {shouldShowButton && (
         <button
           onClick={handlePlayClick}
-          className="fixed bottom-6 right-6 z-40
+          className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-50
             bg-gradient-to-r from-yellow-400 to-yellow-500
-            text-gray-900 font-bold py-3 pl-4 pr-8 rounded-full
-            shadow-2xl hover:shadow-3xl
-            transform hover:scale-110 transition-all
-            border-4 border-red-500
-            text-lg sm:text-xl
+            text-gray-900 font-bold py-2 sm:py-3 pl-3 sm:pl-4 pr-6 sm:pr-8 rounded-full
+            shadow-lg sm:shadow-2xl hover:shadow-xl sm:hover:shadow-3xl
+            transform hover:scale-105 sm:hover:scale-110 transition-all
+            border-2 sm:border-4 border-red-500
+            text-sm sm:text-lg md:text-xl
             touch-manipulation
-            flex items-center gap-2"
+            flex items-center gap-1 sm:gap-2"
         >
           <img 
             src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
             alt="Pikachu"
-            className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-lg"
+            className="w-6 h-6 sm:w-10 sm:h-10 md:w-12 md:h-12 object-contain drop-shadow-md sm:drop-shadow-lg"
           />
           <span>Jugar</span>
         </button>
       )}
-
-      {showGames ? <PokemonGames /> : <PokemonList />}
     </div>
   );
 }
