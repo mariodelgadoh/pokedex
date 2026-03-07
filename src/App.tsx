@@ -36,20 +36,20 @@ function App() {
         {showGames ? <PokemonGames /> : <PokemonList />}
       </div>
 
-      {/* Pie de página - SIN MARGEN SUPERIOR para eliminar espacio blanco */}
+      {/* Pie de página - SIN MARGEN SUPERIOR */}
       {!isModalOpen && !showGames && (
-        <footer className="bg-black/60 backdrop-blur-sm py-4 text-center relative z-10">
-          <p className="text-white/80 text-sm sm:text-base">
+        <footer className="bg-black/60 backdrop-blur-sm py-3 text-center relative z-10">
+          <p className="text-white/80 text-xs sm:text-sm">
             Creado por <span className="font-bold text-yellow-400">Mario Jesús Delgado Hernández</span>
           </p>
         </footer>
       )}
 
-      {/* Botón Jugar - flotando sobre el contenido */}
+      {/* Botón Jugar - SUBIDO para estar más cerca del contenido */}
       {shouldShowButton && (
         <button
           onClick={handlePlayClick}
-          className="fixed bottom-24 right-4 sm:bottom-6 sm:right-6 z-50
+          className="fixed bottom-16 right-4 sm:bottom-6 sm:right-6 z-50
             bg-gradient-to-r from-yellow-400 to-yellow-500
             text-gray-900 font-bold py-2 sm:py-3 pl-3 sm:pl-4 pr-6 sm:pr-8 rounded-full
             shadow-lg sm:shadow-2xl hover:shadow-xl sm:hover:shadow-3xl

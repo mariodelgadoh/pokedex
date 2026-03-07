@@ -137,7 +137,7 @@ export const PokemonList: React.FC = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="relative z-10 p-8 pb-40">
+      <div className="relative z-10 p-8 pb-32">
         <div className="max-w-7xl mx-auto">
           {/* Header con estilo vidrio */}
           <div className="text-center mb-8 relative">
@@ -197,9 +197,9 @@ export const PokemonList: React.FC = () => {
             </div>
           )}
           
-          {/* Botón Cargar más - con margen inferior extra */}
+          {/* Botón Cargar más - con margen inferior reducido */}
           {hasMore && !loading && filteredPokemons.length === pokemons.length && (
-            <div className="flex justify-center mt-8 mb-16">
+            <div className="flex justify-center mt-8 mb-8">
               <button
                 onClick={loadMore}
                 className="bg-gradient-to-r from-yellow-400 to-yellow-500
