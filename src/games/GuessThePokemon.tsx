@@ -50,6 +50,7 @@ export const GuessThePokemon: React.FC<GuessThePokemonProps> = ({ onBackToMenu }
   const loadNewQuestion = useCallback(async () => {
     setLoading(true);
     setFeedback(null);
+    setGameOver(false); // Asegurar que gameOver sea false al cargar nueva pregunta
     
     try {
       const gen = generations[selectedGeneration];
@@ -97,6 +98,7 @@ export const GuessThePokemon: React.FC<GuessThePokemonProps> = ({ onBackToMenu }
     setShowGenerationSelector(false);
     setRound(1);
     setScore(0);
+    setGameOver(false); // Reiniciar gameOver al seleccionar nueva generación
   };
 
   const handleGuess = (guess: string) => {
@@ -117,6 +119,7 @@ export const GuessThePokemon: React.FC<GuessThePokemonProps> = ({ onBackToMenu }
   const restartGame = () => {
     setShowGenerationSelector(true);
     setCurrentPokemon(null);
+    setGameOver(false); // Reiniciar gameOver al volver al selector
   };
 
   const getPokemonImage = (pokemon: Pokemon) => {
